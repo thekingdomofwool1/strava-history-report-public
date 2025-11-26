@@ -1,0 +1,73 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #111;
+  background-color: #f6f6f6;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 3rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgb(0 0 0 / 0.05);
+}
+
+.hero .eyebrow {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: #f4501f;
+  font-weight: 600;
+}
+
+.hero h1 {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 2.4rem;
+}
+
+.lead {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.button {
+  display: inline-flex;
+  background: #fc4c02;
+  color: #fff;
+  padding: 0.9rem 1.8rem;
+  border-radius: 999px;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.status {
+  margin-top: 1rem;
+  color: #0f5132;
+  background: #d1e7dd;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+}
+
+ol {
+  padding-left: 1.4rem;
+}
+
+li + li {
+  margin-top: 0.75rem;
+}

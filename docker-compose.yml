@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  backend:
+    image: strava-history-backend
+    build:
+      context: ./backend
+    ports:
+      - '4000:4000'
+    secrets:
+      - source: backend_env
+        target: /app/.env
+
+  frontend:
+    image: strava-history-frontend
+    build:
+      context: ./frontend
+    env_file:
+      - ./frontend/.env
+    ports:
+      - '5173:5173'
+
+secrets:
+  backend_env:
+    file: ./backend/.env
