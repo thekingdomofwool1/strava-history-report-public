@@ -1,6 +1,6 @@
 services:
   backend:
-    image: image-reg-here/strava-history-backend:latest
+    image: ghcr.io/thekingdomofwoolorg/strava-history-backend:latest
     pull_policy: always
     ports:
       - '4000:4000'
@@ -9,7 +9,7 @@ services:
         target: /app/.env
 
   frontend:
-    image: image-reg-here/strava-history-frontend:latest
+    image: ghcr.io/thekingdomofwoolorg/strava-history-frontend:latest
     pull_policy: always
     env_file:
       - ./frontend.env
