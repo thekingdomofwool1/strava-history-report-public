@@ -5,6 +5,7 @@ import { craftHistoricalBlurb } from './llm';
 import { getActivity, refreshAccessToken, updateActivityDescription, StravaActivity } from './strava';
 
 const fallbackMessage = "On today's run I passed a local landmark worth revisiting.";
+const reportPrefix = '--My noteworthy historical report-- ';
 
 type ProcessInput = {
   activityId: number;
@@ -61,15 +62,6 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
   const activity = await getActivity(authedUser, activityId);
   console.log(`Fetched activity ${activityId} (${activity.name}) of type ${activity.type}`);
 
-  if (activity.type !== 'Run') {
-    console.log(`Skipping activity ${activityId} because type is ${activity.type}`);
-    await prisma.activity.update({
-      where: { id: ensured.id },
-      data: { processed: true, processedAt: new Date(), oneLiner: 'Skipped non-run activity.' }
-    });
-    return;
-  }
-
   const points = extractPoints(activity);
   if (!points) {
     console.warn(`Activity ${activityId} missing GPS data`);
@@ -82,11 +74,12 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
 
   const place = await chooseHistoricPlace(points);
   console.log(`Place selection for activity ${activityId}`, place ? place.name : 'none found');
-  let blurb = fallbackMessage;
+  let blurb = `${reportPrefix}${fallbackMessage}`;
   let placeName: string | null = null;
 
   if (place) {
-    blurb = await craftHistoricalBlurb(place, activity.name);
+    const crafted = await craftHistoricalBlurb(place, activity.name);
+    blurb = `${reportPrefix}${crafted}`;
     placeName = place.name;
     console.log(`Generated historical blurb for activity ${activityId}`, blurb);
   }
