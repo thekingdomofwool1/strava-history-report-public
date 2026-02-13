@@ -48,5 +48,7 @@ export const config: Config = {
     apiKey: required(process.env.OPENAI_API_KEY, 'OPENAI_API_KEY'),
     model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
   },
-  baseAppUrl: process.env.BASE_APP_URL ?? 'http://localhost:5173',
+  baseAppUrl:
+    process.env.BASE_APP_URL ??
+    (process.env.NODE_ENV === 'production' ? 'https://stravafacts.andvos.xyz' : 'http://localhost:5173'),
 };

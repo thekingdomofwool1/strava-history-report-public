@@ -15,7 +15,9 @@ const steps = [
 
 const App = () => {
   const status = useMemo(getStatusMessage, []);
-  const apiBase = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000';
+  const apiBase =
+    import.meta.env.VITE_API_BASE_URL ??
+    (import.meta.env.DEV ? 'http://localhost:4000' : 'https://stravafacts.andvos.xyz');
   const connectUrl = `${apiBase}/auth/strava/start`;
 
   return (
