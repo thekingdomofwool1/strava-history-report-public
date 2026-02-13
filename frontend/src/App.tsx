@@ -9,11 +9,8 @@ const getStatusMessage = () => {
 };
 
 const steps = [
-  'Connect and authorize via Strava’s official OAuth screen',
-  'Approve the required scopes. You can revoke these whenever you want from the Strava settings page',
-  'Immediately after authorization, my backend calls Stravas API (with your token) to register a webhook correlated to your account.',
-  'After your activity is posted, that webhook notifies us, and we begin the backend steps (calling google maps API to identify locations & openAI API to create content)',
-  'After the activity is posted my app will append a fun fact written by an llm (I know, sorry (GPT 4.0, see preceding step)) to your activities description. The fun fact will be related to a historical landmark (statue, museum, etc..) that is in close proximity to the route. If you did not pass by any significant landmarks the application will not leave a comment. However, if the entirety of the run took place within the confines of a park of significance (eg central park) then the fun fact will be a general overview of the park itself.'
+  'We interact with the Strava API using read access plus the ability to write activity descriptions. Permissions are revocable at any time, and any activity description we add can be edited or deleted by you.',
+  'Ever wondered what that cool statue along your route represents? Ever wanted to share those insights with your followers? Now you can! This app will add a fun fact related to a landmark along your route to your activity description. Relevant historical landmarks are identified via the Google Maps API and fun facts are generated with ChatGPT 4.0.'
 ];
 
 const App = () => {

@@ -7,6 +7,7 @@
 
 body {
   margin: 0;
+  background: #111 url('./assets/strava-app-backgroundimage.png') center / cover no-repeat fixed;
 }
 
 .page {
