@@ -28,6 +28,13 @@ This repo contains a TypeScript/Node backend plus a small React frontend that co
    npm run dev
    ```
 
+### Strava webhook security
+
+The `/webhook/strava` POST endpoint requires a valid `X-Strava-Signature` header with an HMAC SHA-256 of the raw request body using `STRAVA_CLIENT_SECRET`. Strava signs each webhook payload; any unsigned or invalidly signed request is rejected with 403.
+
+- **Manual testing**: Compute the signature as `hmac_sha256(STRAVA_CLIENT_SECRET, raw_body)` and send `X-Strava-Signature: sha256=<hex_signature>`.
+- **Dev bypass**: `ALLOW_UNSIGNED_STRAVA_WEBHOOKS=true` can temporarily skip signature verification. **Never set this in production**; it is unsafe.
+
 ### Strava webhook configuration
 
 - Set your Strava API application redirect URI to the same `STRAVA_REDIRECT_URI` value.

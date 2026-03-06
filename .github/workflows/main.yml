@@ -1,9 +1,8 @@
-
 name: Build and Push Containers
 
 on:
     push:
-      branches: [master]
+      branches: [master, 'feature/**']
     workflow_dispatch:
 
 jobs:
@@ -21,6 +20,16 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
 
+        - name: Set image tag
+          id: tag
+          run: |
+            if [ "${{ github.ref_name }}" = "master" ]; then
+              echo "image_tag=latest" >> $GITHUB_OUTPUT
+            else
+              TAG=$(echo "${{ github.ref_name }}" | tr '/' '-')
+              echo "image_tag=$TAG" >> $GITHUB_OUTPUT
+            fi
+
         - name: Log in to GHCR
           run: echo "${GHCR_TOKEN}" | docker login "${REGISTRY}" -u "${GHCR_USERNAME}" --password-stdin
 
@@ -28,17 +37,20 @@ jobs:
           run: |
             docker build -t ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${GITHUB_SHA} backend
             docker tag ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${GITHUB_SHA} \
-                       ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:latest
+                       ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}
+
         - name: Build frontend image
           run: |
             docker build -t ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${GITHUB_SHA} frontend
             docker tag ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${GITHUB_SHA} \
-                       ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:latest
+                       ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}
+
         - name: Push backend image
           run: |
             docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${GITHUB_SHA}
-            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:latest
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}
+
         - name: Push frontend image
           run: |
             docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${GITHUB_SHA}
-            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:latest
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}

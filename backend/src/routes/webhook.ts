@@ -8,10 +8,12 @@ const router = Router();
 const signatureMatches = (req: Request) => {
   const header = req.get('X-Strava-Signature');
   if (!header) {
-    console.warn('X-Strava-Signature header missing; accepting payload without signature', {
-      headers: req.headers
-    });
-    return true;
+    if (process.env.ALLOW_UNSIGNED_STRAVA_WEBHOOKS === 'true') {
+      console.warn('ALLOW_UNSIGNED_STRAVA_WEBHOOKS is set; accepting payload without X-Strava-Signature (unsafe for production)');
+      return true;
+    }
+    console.warn('X-Strava-Signature header missing; rejecting webhook');
+    return false;
   }
   if (!req.rawBody) {
     console.warn('Raw body missing while verifying Strava signature');
