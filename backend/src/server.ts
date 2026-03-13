@@ -5,13 +5,7 @@ import webhookRouter from './routes/webhook';
 import { ensureStravaWebhookSubscription } from './services/webhookSubscription';
 
 const app = express();
-app.use(
-  express.json({
-    verify: (req, _res, buf) => {
-      req.rawBody = Buffer.from(buf);
-    }
-  })
-);
+app.use(express.json());
 
 app.get('/health', (_req, res) => {
   res.json({ ok: true });

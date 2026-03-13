@@ -4,7 +4,7 @@ import { chooseHistoricPlace } from './places';
 import { craftHistoricalBlurb } from './llm';
 import { getActivity, refreshAccessToken, updateActivityDescription, StravaActivity } from './strava';
 
-const fallbackMessage = "On today's run I passed a local landmark worth revisiting.";
+const fallbackMessage = "On today's activity I passed a local landmark worth revisiting.";
 const reportPrefix = '--My noteworthy historical report-- ';
 
 type ProcessInput = {

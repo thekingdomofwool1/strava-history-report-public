@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 const getStatusMessage = () => {
   const params = new URLSearchParams(window.location.search);
   if (params.get('connected')) {
-    return 'Strava account connected! Webhooks will now annotate new runs.';
+    return 'Strava account connected! Webhooks will now annotate new activities.';
   }
-  return 'Connect your Strava account so we can annotate future runs.';
+  return 'Connect your Strava account so we can annotate future activities.';
 };
 
 const steps = [
@@ -24,9 +24,9 @@ const App = () => {
     <main className="page">
       <section className="card hero">
         <p className="eyebrow">Strava + History</p>
-        <h1>Historical highlights for every run</h1>
+        <h1>Historical highlights for every activity</h1>
         <p className="lead">
-          We watch for completed Strava runs, find historical landmarks along your route, ask an LLM for a
+          We watch for completed Strava activities, find historical landmarks along your route, ask an LLM for a
           single-sentence note, and post it back to your activity description.
         </p>
         <a className="button" href={connectUrl}>

@@ -8,7 +8,7 @@ const client = new OpenAI({ apiKey: config.openai.apiKey });
 export const craftHistoricalBlurb = async (place: SelectedPlace, activityName: string) => {
   const prompt = `Write one concise factual sentence (<= 35 words) describing a historical site, park, or trail passed during a run.
 Use only the provided data, avoid embellishment, and prefer concrete facts like founders, designers, openings, or notable events.
-Format similar to "On today's run I passed ${place.name}, ...".
+Format similar to "On today's activity I passed ${place.name}, ...".
 
 Place JSON:
 ${JSON.stringify({

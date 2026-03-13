@@ -15,6 +15,7 @@ type StravaActivity = {
   id: number;
   name: string;
   type: string;
+  sport_type?: string;
   description: string | null;
   start_latlng?: [number, number];
   map?: {

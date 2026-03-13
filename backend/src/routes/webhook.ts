@@ -1,39 +1,9 @@
-import crypto from 'crypto';
-import { Router, type Request } from 'express';
+import { Router } from 'express';
+import { prisma } from '../lib/prisma';
 import { config } from '../config';
 import { processActivity } from '../services/activityProcessor';
 
 const router = Router();
-
-const signatureMatches = (req: Request) => {
-  const header = req.get('X-Strava-Signature');
-  if (!header) {
-    if (process.env.ALLOW_UNSIGNED_STRAVA_WEBHOOKS === 'true') {
-      console.warn('ALLOW_UNSIGNED_STRAVA_WEBHOOKS is set; accepting payload without X-Strava-Signature (unsafe for production)');
-      return true;
-    }
-    console.warn('X-Strava-Signature header missing; rejecting webhook');
-    return false;
-  }
-  if (!req.rawBody) {
-    console.warn('Raw body missing while verifying Strava signature');
-    return false;
-  }
-
-  const incoming = header.trim().startsWith('sha256=') ? header.trim().slice(7) : header.trim();
-  const expected = crypto
-    .createHmac('sha256', config.strava.clientSecret)
-    .update(req.rawBody)
-    .digest('hex');
-
-  const incomingBuf = Buffer.from(incoming, 'hex');
-  const expectedBuf = Buffer.from(expected, 'hex');
-  if (incomingBuf.length !== expectedBuf.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(incomingBuf, expectedBuf);
-};
 
 router.get('/', (req, res) => {
   const { 'hub.mode': mode, 'hub.verify_token': verifyToken, 'hub.challenge': challenge } = req.query as Record<string, string>;
@@ -48,13 +18,15 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  console.log('Incoming Strava webhook signature header', req.headers['x-strava-signature']);
-  if (!signatureMatches(req)) {
-    console.warn('Rejected Strava webhook due to invalid signature');
-    return res.status(403).send('Invalid signature');
+  const event = req.body;
+
+  if (event.object_type === 'athlete' && event.aspect_type === 'delete' && typeof event.owner_id === 'number') {
+    const ownerId = event.owner_id.toString();
+    console.log(`Athlete deauthorization event for ${ownerId}; removing user data`);
+    await prisma.user.deleteMany({ where: { stravaAthleteId: ownerId } });
+    return res.status(200).json({ received: true });
   }
 
-  const event = req.body;
   if (
     event.object_type === 'activity' &&
     ['create', 'update'].includes(event.aspect_type) &&
