@@ -19,22 +19,17 @@ type PlacesResponse = {
 
 const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 const GOOGLE_PLACES_DETAILS = 'https://maps.googleapis.com/maps/api/place/details/json';
-const HISTORIC_KEYWORDS = [
-  'historic',
-  'memorial',
-  'museum',
-  'monument',
-  'landmark',
-  'cemetery',
-  'statue',
-  'heritage',
-  'park',
-  'state park',
-  'trail',
-  'preserve',
-  'garden'
+const SCORING_TIERS = [
+  { keywords: ['statue', 'monument', 'memorial', 'obelisk', 'sculpture'], bonus: 1500 },
+  { keywords: ['museum', 'cemetery', 'heritage', 'historic', 'landmark'], bonus: 700 },
+  { keywords: ['park', 'trail', 'garden', 'preserve', 'arboretum'], bonus: 200 }
 ];
-const PLACE_TYPES = ['tourist_attraction', 'park'];
+
+const getTierBonus = (name: string, types: string): number =>
+  SCORING_TIERS.find((tier) => tier.keywords.some((kw) => name.includes(kw) || types.includes(kw)))?.bonus ?? 0;
+
+const PLACE_TYPES = ['tourist_attraction', 'park', 'point_of_interest'];
+const MONUMENT_KEYWORDS = 'statue sculpture monument memorial obelisk';
 const PLACE_KEYWORDS =
   'historic history museum monument memorial landmark cemetery statue heritage park "state park" trail nature preserve garden arboretum';
 
@@ -50,16 +45,15 @@ const haversine = (a: RepresentativePoint, b: RepresentativePoint) => {
   return R * c;
 };
 
-const fetchNearby = async (point: RepresentativePoint, placeType: string) => {
-  const { data } = await axios.get<PlacesResponse>(GOOGLE_PLACES_URL, {
-    params: {
-      key: config.googleMaps.apiKey,
-      location: `${point.lat},${point.lng}`,
-      radius: config.googleMaps.radius,
-      keyword: PLACE_KEYWORDS,
-      type: placeType
-    }
-  });
+const fetchNearby = async (point: RepresentativePoint, placeType: string, keyword = PLACE_KEYWORDS) => {
+  const params: Record<string, string | number> = {
+    key: config.googleMaps.apiKey,
+    location: `${point.lat},${point.lng}`,
+    radius: config.googleMaps.radius,
+    keyword
+  };
+  if (placeType) params.type = placeType;
+  const { data } = await axios.get<PlacesResponse>(GOOGLE_PLACES_URL, { params });
   return data.results ?? [];
 };
 
@@ -82,10 +76,14 @@ export type SelectedPlace = PlaceCandidate & {
   notes?: string;
 };
 
-export const chooseHistoricPlace = async (points: RepresentativePoint[]): Promise<SelectedPlace | null> => {
+const collectCandidates = async (
+  points: RepresentativePoint[],
+  placeTypes: string[],
+  keyword: string
+): Promise<Map<string, SelectedPlace>> => {
   const candidatesById = new Map<string, SelectedPlace>();
   for (const pt of points) {
-    const responses = await Promise.all(PLACE_TYPES.map((type) => fetchNearby(pt, type)));
+    const responses = await Promise.all(placeTypes.map((type) => fetchNearby(pt, type, keyword)));
     for (const results of responses) {
       for (const candidate of results) {
         const distance = haversine(pt, {
@@ -99,31 +97,46 @@ export const chooseHistoricPlace = async (points: RepresentativePoint[]): Promis
       }
     }
   }
+  return candidatesById;
+};
 
-  if (candidatesById.size === 0) {
-    return null;
-  }
-
-  const scored = Array.from(candidatesById.values())
+const scoreAndSort = (candidates: Map<string, SelectedPlace>) =>
+  Array.from(candidates.values())
     .map((candidate) => {
       const name = candidate.name.toLowerCase();
       const types = candidate.types?.join(' ').toLowerCase() ?? '';
-      const hasBonus = HISTORIC_KEYWORDS.some((kw) => name.includes(kw) || types.includes(kw));
+      const bonus = getTierBonus(name, types);
       const rating = candidate.rating ?? 0;
-      const score = -candidate.distance + rating * 100 + (hasBonus ? 500 : 0);
+      const score = -candidate.distance + rating * 100 + bonus;
       return { candidate, score };
     })
     .sort((a, b) => b.score - a.score);
 
-  const top = scored[0]?.candidate;
+export const chooseHistoricPlace = async (points: RepresentativePoint[]): Promise<SelectedPlace | null> => {
+  // Pass 1: monument-focused search (no type filter — broader net for statues/memorials)
+  const monumentCandidates = await collectCandidates(points, [''], MONUMENT_KEYWORDS);
+  const monumentScored = scoreAndSort(monumentCandidates);
+  const monumentTop = monumentScored[0]?.candidate ?? null;
+
+  // Pass 2: broad historic search across all place types
+  const broadCandidates = await collectCandidates(points, PLACE_TYPES, PLACE_KEYWORDS);
+  const broadScored = scoreAndSort(broadCandidates);
+  const broadTop = broadScored[0]?.candidate ?? null;
+
+  // Prefer a monument result; fall back to broad if none found
+  const top = monumentTop ?? broadTop;
   if (!top) {
     return null;
   }
 
   const details = await fetchDetails(top.place_id);
+  const distance = monumentTop
+    ? (monumentScored[0]?.candidate.distance ?? 0)
+    : (broadScored[0]?.candidate.distance ?? 0);
+
   return {
     ...top,
-    distance: scored[0].candidate.distance,
+    distance,
     notes: details?.editorial_summary?.overview ?? details?.formatted_address
   };
 };
