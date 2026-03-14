@@ -30,11 +30,7 @@ const App = () => {
       <div className="cards-row">
         <section className="card">
           <h2>How it works</h2>
-          <ol>
-            <li>We listen for new activities via Strava webhook.</li>
-            <li>Google Maps finds the most interesting historical landmark along your route.</li>
-            <li>ChatGPT writes a one-sentence fun fact, posted to your activity description. You can edit or delete it any time.</li>
-          </ol>
+          <p>When you finish an activity, we find a nearby historical landmark and add a one-sentence fun fact to your description. You can edit or delete it any time.</p>
         </section>
 
         <section className="card">
