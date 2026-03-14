@@ -1,20 +1,14 @@
 import { useMemo } from 'react';
 
-const getStatusMessage = () => {
+const getConnectedMessage = () => {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('connected')) {
-    return 'Strava account connected! Webhooks will now annotate new activities.';
-  }
-  return 'Connect your Strava account so we can annotate future activities.';
+  return params.get('connected')
+    ? 'Strava account connected! New activities will be annotated automatically.'
+    : null;
 };
 
-const steps = [
-  'We interact with the Strava API using read access plus the ability to write activity descriptions. Permissions are revocable at any time, and any activity description we add can be edited or deleted by you.',
-  'Ever wondered what that cool statue along your route represents? Ever wanted to share those insights with your followers? Now you can! This app will add a fun fact related to a landmark along your route to your activity description. Relevant historical landmarks are identified via the Google Maps API and fun facts are generated with ChatGPT 4.0.'
-];
-
 const App = () => {
-  const status = useMemo(getStatusMessage, []);
+  const connectedMsg = useMemo(getConnectedMessage, []);
   const apiBase =
     import.meta.env.VITE_API_BASE_URL ??
     (import.meta.env.DEV ? 'http://localhost:4000' : 'https://stravafacts.andvos.xyz');
@@ -26,22 +20,42 @@ const App = () => {
         <p className="eyebrow">Strava + History</p>
         <h1>Historical highlights for every activity</h1>
         <p className="lead">
-          We watch for completed Strava activities, find historical landmarks along your route, ask an LLM for a
-          single-sentence note, and post it back to your activity description.
+          Connect your Strava account and we'll automatically add a one-sentence historical note
+          about a landmark along each route to your activity description.
         </p>
-        <a className="button" href={connectUrl}>
-          Connect Strava
-        </a>
-        <p className="status">{status}</p>
+        <a className="button" href={connectUrl}>Connect with Strava</a>
+        {connectedMsg && <p className="status">{connectedMsg}</p>}
       </section>
-      <section className="card">
-        <h2>How it works</h2>
-        <ol>
-          {steps.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
-      </section>
+
+      <div className="cards-row">
+        <section className="card">
+          <h2>How it works</h2>
+          <ol>
+            <li>We listen for new activities via Strava webhook.</li>
+            <li>Google Maps finds the most interesting historical landmark along your route.</li>
+            <li>ChatGPT writes a one-sentence fun fact, posted to your activity description. You can edit or delete it any time.</li>
+          </ol>
+        </section>
+
+        <section className="card">
+          <h2>Privacy</h2>
+          <p>
+            We store only your Strava ID and OAuth tokens. Three GPS points from your route are
+            sent to Google Maps to identify landmarks; your activity name is sent to OpenAI to
+            generate the note. No data is sold or shared. Disconnecting your Strava account
+            deletes all stored data immediately.
+          </p>
+        </section>
+
+        <section className="card">
+          <h2>Contact</h2>
+          <p>
+            Questions or feedback?{' '}
+            <a href="mailto:andrewgwoolman@gmail.com">andrewgwoolman@gmail.com</a>
+          </p>
+          <p className="powered-by">Powered by Strava</p>
+        </section>
+      </div>
     </main>
   );
 };
