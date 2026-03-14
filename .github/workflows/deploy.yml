@@ -12,17 +12,12 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Decode SSH key
-        run: |
-          echo "${{ secrets.DO_SSH_KEY }}" | base64 -d > /tmp/deploy_key
-          chmod 600 /tmp/deploy_key
-
       - name: SSH and deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
-          key_path: /tmp/deploy_key
+          key: ${{ secrets.DO_SSH_KEY }}
           script: |
             cd /root
             docker compose up -d --force-recreate --build
