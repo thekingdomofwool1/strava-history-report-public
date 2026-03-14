@@ -20,8 +20,8 @@ const App = () => {
         <p className="eyebrow">Strava + History</p>
         <h1>Historical highlights for every activity</h1>
         <p className="lead">
-          Connect your Strava account and we'll automatically add a one-sentence historical note
-          about a landmark along each route to your activity description.
+          Every time you finish a Strava activity, we find a nearby landmark and automatically
+          add a fun historical fact to your description.
         </p>
         <a className="button" href={connectUrl}>Connect with Strava</a>
         {connectedMsg && <p className="status">{connectedMsg}</p>}
@@ -41,9 +41,9 @@ const App = () => {
           <h2>Privacy</h2>
           <p>
             We store only your Strava ID and OAuth tokens. Three GPS points from your route are
-            sent to Google Maps to identify landmarks; your activity name is sent to OpenAI to
-            generate the note. No data is sold or shared. Disconnecting your Strava account
-            deletes all stored data immediately.
+            sent to Google Maps to identify landmarks; your activity type (e.g. "Run") is sent
+            to OpenAI to generate the note. No data is sold or shared. Disconnecting your Strava
+            account deletes all stored data immediately.
           </p>
         </section>
 
