@@ -1,10 +1,10 @@
 # Strava History Report
 
-This repo contains a TypeScript/Node backend plus a small React frontend that connect Strava runs to nearby historical landmarks and post a friendly fact back onto the activity description.
+This repo contains a TypeScript/Node backend plus a small React frontend that connect Strava activities to nearby Wikipedia articles and append a short note with a link to the article on the activity description.
 
 ## Tech overview
 
-- **Backend** – Express + Prisma (SQLite). Handles Strava OAuth, Strava webhook processing, Google Maps/Places lookup, OpenAI call, and activity updates.
+- **Backend** – Express + Prisma (SQLite). Handles Strava OAuth, Strava webhook processing, [Wikipedia geosearch](https://www.mediawiki.org/wiki/API:Geosearch) (no API key for read-only use), and activity updates.
 - **Frontend** – Vite + React. Minimal UI with a “Connect Strava” CTA.
 - **Docker** – Separate Dockerfiles for backend/frontend plus a `docker-compose.yml` for local multi-container development.
 
@@ -15,7 +15,7 @@ This repo contains a TypeScript/Node backend plus a small React frontend that co
    - `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, `STRAVA_REDIRECT_URI`
    - `STRAVA_WEBHOOK_VERIFY_TOKEN` – choose any secret and reuse it when registering the webhook on Strava.
    - `STRAVA_WEBHOOK_CALLBACK_URL` – the public HTTPS URL Strava should call (e.g. your ngrok tunnel + `/webhook/strava`).
-   - `GOOGLE_MAPS_API_KEY`, `OPENAI_API_KEY`, optional `OPENAI_MODEL`, `GOOGLE_MAPS_RADIUS`, `BASE_APP_URL`.
+   - Optional: `WIKIPEDIA_ORIGIN` (default `https://en.wikipedia.org`), `WIKIPEDIA_SEARCH_RADIUS` (meters, max 10000), `WIKIPEDIA_USER_AGENT` (identify your app per [API etiquette](https://www.mediawiki.org/wiki/API:Etiquette)), `BASE_APP_URL`.
 2. Install dependencies and generate the Prisma client:
    ```bash
    cd backend
@@ -46,10 +46,10 @@ When Strava sends an activity event, the backend:
 
 1. Finds the user via Strava athlete ID.
 2. Refreshes tokens if necessary.
-3. Fetches the activity (only Run types are processed).
+3. Fetches the activity.
 4. Decodes the polyline to sample start/middle/end points.
-5. Looks up historical Places within a configurable radius.
-6. Uses OpenAI to craft a short blurb and updates the activity description while recording the result in the `Activity` table.
+5. Queries Wikipedia for geolocated articles near those points, scores candidates (distance + keyword tiers), and picks a best article.
+6. Appends a fixed note with the article title and a `curid` link to the activity description, and records the result in the `Activity` table.
 
 ## Frontend setup
 
@@ -101,7 +101,7 @@ Frontend (`/frontend`):
 Prisma schema defines two tables:
 
 - `User`: Strava athlete credentials + metadata.
-- `Activity`: Idempotency + storage for generated blurbs (including the chosen Place name).
+- `Activity`: Idempotency + storage for generated blurbs (including the chosen article title).
 
 SQLite is the default for simplicity; swapping to Postgres only requires changing `DATABASE_URL` and running a migration.
 
@@ -109,5 +109,5 @@ SQLite is the default for simplicity; swapping to Postgres only requires changin
 
 - Implement your preferred secret storage for long-lived tokens in production.
 - Use a Strava Event Queue (e.g., Redis/worker) if webhook volume increases; current implementation processes inline but already guards against duplicates.
-- Extend the Places ranking heuristics or add caching if API usage becomes high.
-- Add tests for the ranking + description generator if you iterate further.
+- Extend the Wikipedia ranking heuristics or add caching if API usage becomes high.
+- Add tests for the ranking + description template if you iterate further.

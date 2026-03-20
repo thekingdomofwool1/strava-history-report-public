@@ -1,11 +1,13 @@
 import polyline from '@mapbox/polyline';
 import { prisma } from '../lib/prisma';
 import { chooseHistoricPlace } from './places';
-import { craftHistoricalBlurb } from './llm';
 import { getActivity, refreshAccessToken, updateActivityDescription, StravaActivity } from './strava';
 
 const fallbackMessage = "On today's activity I passed a local landmark worth revisiting.";
 const reportPrefix = '--My noteworthy historical report-- ';
+
+const buildWikipediaNote = (place: { title: string; articleUrl: string }) =>
+  `On today's activity I passed by ${place.title}. Read more about it here: ${place.articleUrl}`;
 
 type ProcessInput = {
   activityId: number;
@@ -73,23 +75,17 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
   }
 
   const place = await chooseHistoricPlace(points).catch((err) => {
-    console.warn(`Place lookup failed for activity ${activityId}, using fallback message`, err);
+    console.warn(`Wikipedia place lookup failed for activity ${activityId}, using fallback message`, err);
     return null;
   });
-  console.log(`Place selection for activity ${activityId}`, place ? place.name : 'none found');
+  console.log(`Place selection for activity ${activityId}`, place ? place.title : 'none found');
   let blurb = `${reportPrefix}${fallbackMessage}`;
   let placeName: string | null = null;
 
   if (place) {
-    const crafted = await craftHistoricalBlurb(place, activity.name).catch((err) => {
-      console.warn(`LLM generation failed for activity ${activityId}, using fallback message`, err);
-      return null;
-    });
-    if (crafted) {
-      blurb = `${reportPrefix}${crafted}`;
-      placeName = place.name;
-      console.log(`Generated historical blurb for activity ${activityId}`, blurb);
-    }
+    blurb = `${reportPrefix}${buildWikipediaNote(place)}`;
+    placeName = place.title;
+    console.log(`Appended Wikipedia note for activity ${activityId}`, blurb);
   }
 
   const existingDescription = activity.description ?? '';

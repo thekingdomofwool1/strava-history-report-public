@@ -18,10 +18,10 @@ const App = () => {
     <main className="page">
       <section className="card hero">
         <p className="eyebrow">Strava + History</p>
-        <h1>Historical highlights for every activity</h1>
+        <h1>Wikipedia highlights for every activity</h1>
         <p className="lead">
-          Every time you finish a Strava activity, we find a nearby landmark and automatically
-          add a fun historical fact to your description.
+          Every time you finish a Strava activity, we find a nearby Wikipedia article along your route
+          and add a short note with a link to your description.
         </p>
         <a className="button" href={connectUrl}>Connect with Strava</a>
         {connectedMsg && <p className="status">{connectedMsg}</p>}
@@ -30,16 +30,20 @@ const App = () => {
       <div className="cards-row">
         <section className="card">
           <h2>How it works</h2>
-          <p>When you finish an activity, we find a nearby historical landmark and add a one-sentence fun fact to your description. You can edit or delete it any time.</p>
+          <p>
+            When you finish an activity, we sample points on your route, query Wikipedia for nearby
+            articles, pick one using simple scoring, and append a fixed note with a link. You can
+            edit or delete it any time.
+          </p>
         </section>
 
         <section className="card">
           <h2>Privacy</h2>
           <p>
             We store only your Strava ID and OAuth tokens. Three GPS points from your route are
-            sent to Google Maps to identify landmarks; your activity type (e.g. "Run") is sent
-            to OpenAI to generate the note. No data is sold or shared. Disconnecting your Strava
-            account deletes all stored data immediately.
+            sent to Wikipedia&apos;s public API (geosearch) to find articles; no Google or OpenAI
+            keys are used. No data is sold or shared. Disconnecting your Strava account deletes
+            all stored data immediately.
           </p>
         </section>
 
