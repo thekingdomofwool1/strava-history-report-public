@@ -72,16 +72,24 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
     return;
   }
 
-  const place = await chooseHistoricPlace(points);
+  const place = await chooseHistoricPlace(points).catch((err) => {
+    console.warn(`Place lookup failed for activity ${activityId}, using fallback message`, err);
+    return null;
+  });
   console.log(`Place selection for activity ${activityId}`, place ? place.name : 'none found');
   let blurb = `${reportPrefix}${fallbackMessage}`;
   let placeName: string | null = null;
 
   if (place) {
-    const crafted = await craftHistoricalBlurb(place, activity.name);
-    blurb = `${reportPrefix}${crafted}`;
-    placeName = place.name;
-    console.log(`Generated historical blurb for activity ${activityId}`, blurb);
+    const crafted = await craftHistoricalBlurb(place, activity.name).catch((err) => {
+      console.warn(`LLM generation failed for activity ${activityId}, using fallback message`, err);
+      return null;
+    });
+    if (crafted) {
+      blurb = `${reportPrefix}${crafted}`;
+      placeName = place.name;
+      console.log(`Generated historical blurb for activity ${activityId}`, blurb);
+    }
   }
 
   const existingDescription = activity.description ?? '';
@@ -93,7 +101,9 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
     await updateActivityDescription(authedUser, activityId, newDescription);
     console.log(`Updated Strava activity ${activityId} description`);
   } catch (err) {
-    console.error(`Failed to update Strava activity ${activityId}`, err);
+    const status = (err as any)?.response?.status;
+    const body = (err as any)?.response?.data;
+    console.error(`Failed to update Strava activity ${activityId} (HTTP ${status ?? 'unknown'})`, body ?? err);
     throw err;
   }
 

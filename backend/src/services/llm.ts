@@ -43,7 +43,7 @@ Activity name: ${activityName}`;
     return text.text.trim();
   }
 
-  const fallback = completion.output_text?.[0];
+  const fallback = completion.output_text;
   if (typeof fallback === 'string') {
     return fallback.trim();
   }
