@@ -30,7 +30,7 @@ export const buildAuthUrl = (state: string): string => {
     client_id: config.strava.clientId,
     response_type: 'code',
     redirect_uri: config.strava.redirectUri,
-    scope: 'activity:read_all,activity:write',
+    scope: 'read,read_all,activity:read,activity:read_all,activity:write',
     state
   });
   return `https://www.strava.com/oauth/authorize?${params.toString()}`;
