@@ -31,7 +31,7 @@ const App = () => {
         <section className="card">
           <h2>How it works</h2>
           <p>
-            When you finish an activity we will append to your activity description a link to Wikipedia article about a notable landmark along your route
+            When you finish an activity we will append to your activity description a link to a Wikipedia article about a notable landmark along your route
           </p>
         </section>
 
