@@ -31,9 +31,7 @@ const App = () => {
         <section className="card">
           <h2>How it works</h2>
           <p>
-            When you finish an activity, we sample points on your route, query Wikipedia for nearby
-            articles, pick one using simple scoring, and append a fixed note with a link. You can
-            edit or delete it any time.
+            When you finish an activity we will append to your activity description a link to Wikipedia article about a notable landmark along your route
           </p>
         </section>
 
