@@ -17,7 +17,7 @@ export type SelectedPlace = {
 
 const SCORING_TIERS = [
   { keywords: ['statue', 'monument', 'memorial', 'obelisk', 'sculpture'], bonus: 1500 },
-  { keywords: ['museum', 'cemetery', 'heritage', 'historic', 'landmark'], bonus: 700 },
+  { keywords: ['museum', 'cemetery', 'heritage', 'historic', 'landmark', 'church', 'cathedral', 'chapel', 'basilica', 'abbey', 'monastery', 'priory'], bonus: 700 },
   { keywords: ['park', 'trail', 'garden', 'preserve', 'arboretum'], bonus: 200 }
 ];
 
