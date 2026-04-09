@@ -113,6 +113,13 @@ const scoreAndSort = (candidates: MergedCandidate[]) =>
     })
     .sort((a, b) => b.score - a.score);
 
+/** Pick randomly from the top-N scored candidates. */
+const pickFromTop = (scored: { candidate: MergedCandidate; score: number }[], n: number): MergedCandidate | null => {
+  const pool = scored.slice(0, n);
+  if (pool.length === 0) return null;
+  return pool[Math.floor(Math.random() * pool.length)].candidate;
+};
+
 const toSelectedPlace = (c: MergedCandidate): SelectedPlace => ({
   pageid: c.pageid,
   title: c.title,
@@ -122,22 +129,29 @@ const toSelectedPlace = (c: MergedCandidate): SelectedPlace => ({
   articleUrl: articleUrlForPage(c.pageid)
 });
 
-export const chooseHistoricPlace = async (points: RepresentativePoint[]): Promise<SelectedPlace | null> => {
+export const chooseHistoricPlace = async (
+  points: RepresentativePoint[],
+  excludedPageIds: Set<number> = new Set()
+): Promise<SelectedPlace | null> => {
   const merged = await mergeCandidatesByPageId(points);
   if (merged.size === 0) {
     return null;
   }
 
   const all = Array.from(merged.values());
-  const monumentSubset = all.filter((c) => titleMatchesMonumentPass(c.title));
 
+  // Filter out already-used articles; fall back to full set if everything is excluded.
+  const novel = all.filter((c) => !excludedPageIds.has(c.pageid));
+  const candidates = novel.length > 0 ? novel : all;
+
+  const monumentSubset = candidates.filter((c) => titleMatchesMonumentPass(c.title));
   const monumentScored = scoreAndSort(monumentSubset);
-  const monumentTop = monumentScored[0]?.candidate ?? null;
+  const monumentPick = pickFromTop(monumentScored, 3);
 
-  const broadScored = scoreAndSort(all);
-  const broadTop = broadScored[0]?.candidate ?? null;
+  const broadScored = scoreAndSort(candidates);
+  const broadPick = pickFromTop(broadScored, 5);
 
-  const top = monumentTop ?? broadTop;
+  const top = monumentPick ?? broadPick;
   if (!top) {
     return null;
   }

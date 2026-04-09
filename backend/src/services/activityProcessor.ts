@@ -3,11 +3,37 @@ import { prisma } from '../lib/prisma';
 import { chooseHistoricPlace } from './places';
 import { getActivity, refreshAccessToken, updateActivityDescription, StravaActivity } from './strava';
 
-const fallbackMessage = "On today's activity I passed a local landmark worth revisiting.";
 const reportPrefix = '--My noteworthy historical report-- ';
 
-const buildWikipediaNote = (place: { title: string; articleUrl: string }) =>
-  `On today's activity I passed by ${place.title}. Read more about it here: ${place.articleUrl}`;
+const ACTIVITY_LABELS: Record<string, string> = {
+  Run: 'run',
+  TrailRun: 'trail run',
+  VirtualRun: 'virtual run',
+  Ride: 'bike ride',
+  MountainBikeRide: 'mountain bike ride',
+  GravelRide: 'gravel ride',
+  EBikeRide: 'e-bike ride',
+  EMountainBikeRide: 'e-bike ride',
+  VirtualRide: 'virtual ride',
+  Hike: 'hike',
+  Walk: 'walk',
+  Swim: 'swim',
+  Kayaking: 'kayak',
+  Rowing: 'row',
+  NordicSki: 'ski',
+  AlpineSki: 'ski',
+  Workout: 'workout',
+  Yoga: 'yoga session'
+};
+
+const getActivityLabel = (activity: { type: string; sport_type?: string }): string =>
+  ACTIVITY_LABELS[activity.sport_type ?? ''] ?? ACTIVITY_LABELS[activity.type] ?? 'activity';
+
+const buildWikipediaNote = (place: { title: string; articleUrl: string }, activityLabel: string) =>
+  `On today's ${activityLabel} I passed by ${place.title}. Read more about it here: ${place.articleUrl}`;
+
+const buildFallbackMessage = (activityLabel: string) =>
+  `On today's ${activityLabel} I passed a local landmark worth revisiting.`;
 
 type ProcessInput = {
   activityId: number;
@@ -64,6 +90,8 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
   const activity = await getActivity(authedUser, activityId);
   console.log(`Fetched activity ${activityId} (${activity.name}) of type ${activity.type}`);
 
+  const activityLabel = getActivityLabel(activity);
+
   const points = extractPoints(activity);
   if (!points) {
     console.warn(`Activity ${activityId} missing GPS data`);
@@ -74,16 +102,19 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
     return;
   }
 
-  const place = await chooseHistoricPlace(points).catch((err) => {
+  const usedPlaces = await prisma.usedPlace.findMany({ where: { userId: user.id }, select: { pageId: true } });
+  const excludedPageIds = new Set(usedPlaces.map((p) => p.pageId));
+
+  const place = await chooseHistoricPlace(points, excludedPageIds).catch((err) => {
     console.warn(`Wikipedia place lookup failed for activity ${activityId}, using fallback message`, err);
     return null;
   });
   console.log(`Place selection for activity ${activityId}`, place ? place.title : 'none found');
-  let blurb = `${reportPrefix}${fallbackMessage}`;
+  let blurb = `${reportPrefix}${buildFallbackMessage(activityLabel)}`;
   let placeName: string | null = null;
 
   if (place) {
-    blurb = `${reportPrefix}${buildWikipediaNote(place)}`;
+    blurb = `${reportPrefix}${buildWikipediaNote(place, activityLabel)}`;
     placeName = place.title;
     console.log(`Appended Wikipedia note for activity ${activityId}`, blurb);
   }
@@ -101,6 +132,14 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
     const body = (err as any)?.response?.data;
     console.error(`Failed to update Strava activity ${activityId} (HTTP ${status ?? 'unknown'})`, body ?? err);
     throw err;
+  }
+
+  if (place) {
+    await prisma.usedPlace.upsert({
+      where: { userId_pageId: { userId: user.id, pageId: place.pageid } },
+      update: {},
+      create: { userId: user.id, pageId: place.pageid, placeName: place.title }
+    });
   }
 
   await prisma.activity.update({
