@@ -7,16 +7,11 @@ services:
     secrets:
       - source: backend_env
         target: /app/.env
+    volumes:
+      - backend_db:/app/prisma
 
-  frontend:
-    image: ghcr.io/thekingdomofwoolorg/strava-history-frontend:latest
-    pull_policy: always
-    env_file:
-      - ./frontend.env
-    ports:
-      - '5173:5173'
-    depends_on:
-      - backend
+volumes:
+  backend_db:
 
 secrets:
   backend_env:

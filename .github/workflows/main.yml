@@ -10,11 +10,10 @@ jobs:
       runs-on: ubuntu-latest
       env:
         REGISTRY: ghcr.io
-        IMAGE_NAMESPACE: thekingdomofwoolorg          # change to your namespace
-        GHCR_USERNAME: thekingdomofwool1                   # replace for local testing; later use secrets
-        GHCR_TOKEN: "REDACTED"
+        IMAGE_NAMESPACE: thekingdomofwoolorg
+        GHCR_USERNAME: thekingdomofwool1
+        GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         BACKEND_IMAGE_NAME: strava-history-backend
-        FRONTEND_IMAGE_NAME: strava-history-frontend
 
       steps:
         - name: Checkout
@@ -39,18 +38,7 @@ jobs:
             docker tag ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${GITHUB_SHA} \
                        ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}
 
-        - name: Build frontend image
-          run: |
-            docker build -t ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${GITHUB_SHA} frontend
-            docker tag ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${GITHUB_SHA} \
-                       ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}
-
         - name: Push backend image
           run: |
             docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${GITHUB_SHA}
             docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${BACKEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}
-
-        - name: Push frontend image
-          run: |
-            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${GITHUB_SHA}
-            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${FRONTEND_IMAGE_NAME}:${{ steps.tag.outputs.image_tag }}

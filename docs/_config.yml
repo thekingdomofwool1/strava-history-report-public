@@ -1,0 +1,5 @@
+theme: jekyll-theme-minimal
+title: Strava History Report
+description: Wikipedia highlights for every Strava activity
+baseurl: ""
+url: "https://stravafacts.andvos.xyz"
