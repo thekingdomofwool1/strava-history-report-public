@@ -74,8 +74,7 @@ layout: default
   <p class="eyebrow">Strava + History</p>
   <h1>Wikipedia highlights for every activity</h1>
   <p class="lead">
-    Every time you finish a Strava activity, we find a nearby Wikipedia article along your route
-    and add a short note with a link to your description.
+    We integrate with Strava to add an activity description that provides a link to a Wikipedia article about a location of interest or prominence along your route.
   </p>
   <a class="btn-strava" href="https://api.stravafacts.andvos.xyz/auth/strava/start">Connect with Strava</a>
   <p class="status-connected" id="connected-msg">
@@ -87,8 +86,7 @@ layout: default
   <div class="card">
     <h3>How it works</h3>
     <p>
-      When you finish an activity we will append to your activity description a link to a
-      Wikipedia article about a notable landmark along your route.
+      When you finish an activity we append a link to a Wikipedia article about a notable location along your route to your activity description.
     </p>
   </div>
 
@@ -96,9 +94,8 @@ layout: default
     <h3>Privacy</h3>
     <p>
       We store only your Strava ID and OAuth tokens. Three GPS points from your route are
-      sent to Wikipedia's public API (geosearch) to find articles; no Google or OpenAI
-      keys are used. No data is sold or shared. Disconnecting your Strava account deletes
-      all stored data immediately.
+      sent to Wikipedia's public API to find nearby articles. No data is sold or shared.
+      Disconnecting your Strava account deletes all stored data immediately.
     </p>
   </div>
 

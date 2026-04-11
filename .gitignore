@@ -5,5 +5,4 @@ node_modules
 backend/dist
 backend/prisma/dev.db
 .DS_Store
-strava-api-application-description.md
 config-files-for-server/
