@@ -8,3 +8,4 @@ backend/prisma/*.db-journal
 .DS_Store
 .cursor/
 config-files-for-server/
+.claude
