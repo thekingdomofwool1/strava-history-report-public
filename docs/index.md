@@ -44,12 +44,9 @@ layout: default
   }
   .cards {
     display: grid;
-    grid-template-columns: 1fr 1.6fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1rem;
     margin-top: 2rem;
-  }
-  @media (max-width: 640px) {
-    .cards { grid-template-columns: 1fr; }
   }
   .card h3 {
     margin-top: 0;
