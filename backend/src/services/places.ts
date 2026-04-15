@@ -144,11 +144,16 @@ export const chooseHistoricPlace = async (
   const novel = all.filter((c) => !excludedPageIds.has(c.pageid));
   const candidates = novel.length > 0 ? novel : all;
 
-  const monumentSubset = candidates.filter((c) => titleMatchesMonumentPass(c.title));
+  // Prefer candidates within 200 m of any sampled route point; fall back to full set if none qualify.
+  const NEARBY_M = 200;
+  const nearby = candidates.filter((c) => c.distance <= NEARBY_M);
+  const pool = nearby.length > 0 ? nearby : candidates;
+
+  const monumentSubset = pool.filter((c) => titleMatchesMonumentPass(c.title));
   const monumentScored = scoreAndSort(monumentSubset);
   const monumentPick = pickFromTop(monumentScored, 3);
 
-  const broadScored = scoreAndSort(candidates);
+  const broadScored = scoreAndSort(pool);
   const broadPick = pickFromTop(broadScored, 5);
 
   const top = monumentPick ?? broadPick;
