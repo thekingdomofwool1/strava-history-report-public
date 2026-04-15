@@ -38,6 +38,7 @@ const buildFallbackMessage = (activityLabel: string) =>
 type ProcessInput = {
   activityId: number;
   ownerId: string;
+  isUpdate?: boolean;
 };
 
 const ensureActivity = async (stravaId: string, userId: number) => {
@@ -69,7 +70,7 @@ const extractPoints = (activity: StravaActivity) => {
   return [start, mid, end];
 };
 
-export const processActivity = async ({ activityId, ownerId }: ProcessInput) => {
+export const processActivity = async ({ activityId, ownerId, isUpdate }: ProcessInput) => {
   console.log(`Processing activity ${activityId} for owner ${ownerId}`);
   const user = await prisma.user.findUnique({ where: { stravaAthleteId: ownerId } });
   if (!user) {
@@ -80,7 +81,21 @@ export const processActivity = async ({ activityId, ownerId }: ProcessInput) => 
   const stravaActivityId = activityId.toString();
   const existing = await prisma.activity.findUnique({ where: { stravaActivityId } });
   if (existing?.processed) {
-    console.log(`Activity ${activityId} already processed, skipping`);
+    if (isUpdate && existing.oneLiner) {
+      const authedUser = await refreshAccessToken(user.id);
+      const activity = await getActivity(authedUser, activityId);
+      const currentDescription = activity.description ?? '';
+      if (!currentDescription.includes(existing.oneLiner)) {
+        console.log(`Blurb missing from activity ${activityId} after update, restoring`);
+        const newDescription = currentDescription
+          ? `${currentDescription}\n\n${existing.oneLiner}`
+          : existing.oneLiner;
+        await updateActivityDescription(authedUser, activityId, newDescription);
+        console.log(`Restored blurb on activity ${activityId}`);
+      }
+    } else {
+      console.log(`Activity ${activityId} already processed, skipping`);
+    }
     return;
   }
 

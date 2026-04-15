@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
       objectId: event.object_id,
       ownerId: event.owner_id
     });
-    processActivity({ activityId: event.object_id, ownerId: event.owner_id.toString() }).catch((err) => {
+    processActivity({ activityId: event.object_id, ownerId: event.owner_id.toString(), isUpdate: event.aspect_type === 'update' }).catch((err) => {
       console.error('Failed to process activity', err);
     });
   } else {
