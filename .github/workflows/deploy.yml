@@ -20,4 +20,5 @@ jobs:
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
             cd /root
-            docker compose up -d --force-recreate --build
+            docker compose pull
+            docker compose up -d --force-recreate
