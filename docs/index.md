@@ -107,7 +107,12 @@ layout: default
 </div>
 
 <script>
+  const LS_KEY = 'stravaConnected';
   if (new URLSearchParams(window.location.search).get('connected')) {
+    localStorage.setItem(LS_KEY, '1');
+    history.replaceState(null, '', window.location.pathname);
+  }
+  if (localStorage.getItem(LS_KEY)) {
     document.getElementById('connected-msg').style.display = 'block';
   }
 </script>
