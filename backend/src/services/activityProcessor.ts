@@ -30,7 +30,7 @@ const getActivityLabel = (activity: { type: string; sport_type?: string }): stri
   ACTIVITY_LABELS[activity.sport_type ?? ''] ?? ACTIVITY_LABELS[activity.type] ?? 'activity';
 
 const buildWikipediaNote = (place: { title: string; articleUrl: string }, activityLabel: string) =>
-  `On today's ${activityLabel} I passed by ${place.title}. Read more about it here: ${place.articleUrl}`;
+  `On today's ${activityLabel} I passed by ${place.title}. Read about it here: ${place.articleUrl}`;
 
 const buildFallbackMessage = (activityLabel: string) =>
   `On today's ${activityLabel} I passed a local landmark worth revisiting.`;
