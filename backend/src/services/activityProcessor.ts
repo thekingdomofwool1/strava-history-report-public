@@ -1,7 +1,7 @@
 import polyline from '@mapbox/polyline';
 import { prisma } from '../lib/prisma';
 import { chooseHistoricPlace } from './places';
-import { getActivity, refreshAccessToken, updateActivityDescription, StravaActivity } from './strava';
+import { getActivity, refreshAccessToken, updateActivityDescription, isUnauthorized, StravaActivity } from './strava';
 
 const reportPrefix = '--My noteworthy historical report-- ';
 
@@ -39,6 +39,18 @@ type ProcessInput = {
   activityId: number;
   ownerId: string;
   isUpdate?: boolean;
+};
+
+const withTokenRetry = async <T>(userId: number, fn: (user: { accessToken: string }) => Promise<T>): Promise<T> => {
+  let authedUser = await refreshAccessToken(userId);
+  try {
+    return await fn(authedUser);
+  } catch (err) {
+    if (!isUnauthorized(err)) throw err;
+    console.log(`Got 401 for user ${userId}, force-refreshing token and retrying`);
+    authedUser = await refreshAccessToken(userId, true);
+    return fn(authedUser);
+  }
 };
 
 const ensureActivity = async (stravaId: string, userId: number) => {
@@ -82,17 +94,18 @@ export const processActivity = async ({ activityId, ownerId, isUpdate }: Process
   const existing = await prisma.activity.findUnique({ where: { stravaActivityId } });
   if (existing?.processed) {
     if (isUpdate && existing.oneLiner) {
-      const authedUser = await refreshAccessToken(user.id);
-      const activity = await getActivity(authedUser, activityId);
-      const currentDescription = activity.description ?? '';
-      if (!currentDescription.includes(existing.oneLiner)) {
-        console.log(`Blurb missing from activity ${activityId} after update, restoring`);
-        const newDescription = currentDescription
-          ? `${currentDescription}\n\n${existing.oneLiner}`
-          : existing.oneLiner;
-        await updateActivityDescription(authedUser, activityId, newDescription);
-        console.log(`Restored blurb on activity ${activityId}`);
-      }
+      await withTokenRetry(user.id, async (authedUser) => {
+        const activity = await getActivity(authedUser, activityId);
+        const currentDescription = activity.description ?? '';
+        if (!currentDescription.includes(existing.oneLiner!)) {
+          console.log(`Blurb missing from activity ${activityId} after update, restoring`);
+          const newDescription = currentDescription
+            ? `${currentDescription}\n\n${existing.oneLiner}`
+            : existing.oneLiner!;
+          await updateActivityDescription(authedUser, activityId, newDescription);
+          console.log(`Restored blurb on activity ${activityId}`);
+        }
+      });
     } else {
       console.log(`Activity ${activityId} already processed, skipping`);
     }
@@ -101,8 +114,7 @@ export const processActivity = async ({ activityId, ownerId, isUpdate }: Process
 
   const ensured = await ensureActivity(stravaActivityId, user.id);
   console.log(`Ensured activity record ${ensured.id} for Strava activity ${activityId}`);
-  const authedUser = await refreshAccessToken(user.id);
-  const activity = await getActivity(authedUser, activityId);
+  const activity = await withTokenRetry(user.id, (authedUser) => getActivity(authedUser, activityId));
   console.log(`Fetched activity ${activityId} (${activity.name}) of type ${activity.type}`);
 
   const activityLabel = getActivityLabel(activity);
@@ -140,7 +152,7 @@ export const processActivity = async ({ activityId, ownerId, isUpdate }: Process
     : `${existingDescription ? `${existingDescription}\n\n` : ''}${blurb}`;
 
   try {
-    await updateActivityDescription(authedUser, activityId, newDescription);
+    await withTokenRetry(user.id, (authedUser) => updateActivityDescription(authedUser, activityId, newDescription));
     console.log(`Updated Strava activity ${activityId} description`);
   } catch (err) {
     const status = (err as any)?.response?.status;

@@ -40,10 +40,16 @@ router.get('/callback', async (req, res, next) => {
       }
     });
 
-    res.redirect(`${config.baseAppUrl}?connected=1`);
+    res.redirect(`${config.baseAppUrl}?connected=1&athlete=${athleteId}`);
   } catch (err) {
     next(err);
   }
+});
+
+router.get('/status/:athleteId', async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  const user = await prisma.user.findUnique({ where: { stravaAthleteId: req.params.athleteId } });
+  res.json({ connected: !!user });
 });
 
 export default router;
