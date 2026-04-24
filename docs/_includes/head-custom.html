@@ -23,6 +23,13 @@
   .sidebar-feed-teaser img:last-child {
     margin-bottom: 0;
   }
+  /* Desktop minimal layout: header 270px + ~90px gutter before section — widen image into gutter only (no overlap with main column). */
+  @media screen and (min-width: 961px) {
+    .sidebar-feed-teaser img {
+      width: 322px;
+      max-width: none;
+    }
+  }
   .github-project-footer {
     margin-top: 0.75rem;
   }
