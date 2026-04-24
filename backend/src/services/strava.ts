@@ -52,15 +52,17 @@ export const exchangeToken = async (code: string) => {
   return data;
 };
 
-export const refreshAccessToken = async (userId: number) => {
+export const refreshAccessToken = async (userId: number, forceRefresh = false) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) {
     throw new Error('User not found');
   }
 
-  if (user.tokenExpiresAt.getTime() > Date.now() + 60 * 1000) {
+  if (!forceRefresh && user.tokenExpiresAt.getTime() > Date.now() + 60 * 1000) {
     return user;
   }
+
+  console.log(`Refreshing access token for user ${userId} (force=${forceRefresh})`);
 
   const params = new URLSearchParams({
     client_id: config.strava.clientId,
@@ -100,5 +102,8 @@ export const updateActivityDescription = async (user: { accessToken: string }, a
     { headers: { Authorization: `Bearer ${user.accessToken}` } }
   );
 };
+
+export const isUnauthorized = (err: unknown): boolean =>
+  axios.isAxiosError(err) && err.response?.status === 401;
 
 export type { StravaActivity };

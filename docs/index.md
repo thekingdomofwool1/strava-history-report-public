@@ -134,7 +134,33 @@ layout: default
 </p>
 
 <script>
-  if (new URLSearchParams(window.location.search).get('connected')) {
-    document.getElementById('connected-msg').style.display = 'block';
-  }
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var msg = document.getElementById('connected-msg');
+    var LS_KEY = 'strava_athlete_id';
+
+    if (params.get('connected')) {
+      var athleteId = params.get('athlete');
+      if (athleteId) localStorage.setItem(LS_KEY, athleteId);
+      msg.style.display = 'block';
+      history.replaceState(null, '', window.location.pathname);
+      return;
+    }
+
+    var stored = localStorage.getItem(LS_KEY);
+    if (stored) {
+      fetch('https://api.andvos.xyz/auth/strava/status/' + stored)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.connected) {
+            msg.style.display = 'block';
+          } else {
+            localStorage.removeItem(LS_KEY);
+          }
+        })
+        .catch(function () {
+          msg.style.display = 'block';
+        });
+    }
+  })();
 </script>
