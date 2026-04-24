@@ -130,7 +130,7 @@ layout: default
 </div>
 
 <p class="site-version-row">
-  <span>Version 1.0.0</span><span class="site-version-sep" aria-hidden="true">·</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
+  <span>Version 1.1.0</span><span class="site-version-sep" aria-hidden="true">·</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
 </p>
 
 <script>

@@ -55,6 +55,13 @@ permalink: /changelog/
 
 <ul class="changelog-list">
   <li>
+    <p class="changelog-meta">24 April 2026 · <strong>1.1.0</strong></p>
+    <h2>UI overhaul</h2>
+    <p>
+      UI overhaul, switched frontend hosting to GitHub Pages as opposed to the monolith architecture I had previously.
+    </p>
+  </li>
+  <li>
     <p class="changelog-meta">26 March 2026 · <strong>1.0.0</strong></p>
     <h2>New Wikipedia integration</h2>
     <p>
