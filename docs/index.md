@@ -76,13 +76,13 @@ layout: default
     border-top: 1px solid #eee;
   }
   .site-version-row a {
-    color: #444;
+    color: #0969da;
     font-weight: 500;
     text-decoration: none;
   }
   .site-version-row a:hover {
     text-decoration: underline;
-    color: #333;
+    color: #0550ae;
   }
   .site-version-sep {
     margin: 0 0.35rem;
@@ -92,7 +92,7 @@ layout: default
 
 <div class="hero">
   <h1>Learn about the landmarks along your favorite route</h1>
-  <p class="subhead">and share with your following!</p>
+  <p class="subhead">and share with your followers</p>
   <p class="lead">
     We integrate with Strava to add an activity description that provides a link to a Wikipedia article about a location of interest or prominence along your route.
   </p>

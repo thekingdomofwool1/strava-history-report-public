@@ -3,3 +3,7 @@ title: Strava History Report
 description: Wikipedia-powered highlights for every activity
 baseurl: ""
 url: "https://stravafacts.andvos.xyz"
+# Public repo (Pages source); footer link uses this so it stays correct if metadata is from the private repo.
+public_source:
+  url: "https://github.com/thekingdomofwool1/strava-history-report-public"
+  nwo: "thekingdomofwool1/strava-history-report-public"
