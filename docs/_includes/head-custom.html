@@ -30,14 +30,50 @@
       max-width: none;
     }
   }
-  .github-project-footer {
-    margin-top: 0.75rem;
+  .sidebar-footer-meta {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e8e8e8;
   }
-  .github-project-label {
+  .sidebar-footer-meta p {
+    margin: 0 0 0.65rem;
     font-size: 0.85rem;
+    line-height: 1.45;
     color: #555;
   }
+  .sidebar-footer-meta p:last-child {
+    margin-bottom: 0;
+  }
+  .github-project-footer {
+    margin-top: 0.35rem;
+  }
+  .github-project-label {
+    font-size: 0.8rem;
+    color: #666;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+  }
   .github-project-footer a {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+  }
+  /* Long sidebar: scroll inside header instead of fixed footer covering previews */
+  @media screen and (min-width: 961px) {
+    header {
+      max-height: calc(100vh - 100px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 1rem;
+    }
+    footer {
+      /* Theme credits only; align under main column, not fixed over sidebar */
+      width: auto;
+      max-width: 500px;
+      float: right;
+      position: static;
+      clear: both;
+      margin-top: 0.5rem;
+      padding-bottom: 1rem;
+    }
   }
 </style>

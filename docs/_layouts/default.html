@@ -29,6 +29,16 @@
           <img src="{{ '/assets/examples/feed-example-afternoon.png' | relative_url }}" alt="Strava activity: afternoon run with a Wikipedia link about Boettcher Memorial Tropical Conservatory in the description" loading="lazy" decoding="async" />
         </div>
 
+        {% if site.github.is_project_page %}
+        <div class="sidebar-footer-meta">
+          <p>This project is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
+          <p class="view github-project-footer">
+            <span class="github-project-label">View the Project on GitHub</span><br>
+            <a href="{{ site.public_source.url }}">{{ site.public_source.nwo }}</a>
+          </p>
+        </div>
+        {% endif %}
+
         {% if site.github.is_user_page %}
         <p class="view"><a href="{{ site.github.owner_url }}">View My GitHub Profile</a></p>
         {% endif %}
@@ -47,13 +57,6 @@
 
       </section>
       <footer>
-        {% if site.github.is_project_page %}
-        <p>This project is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
-        <p class="view github-project-footer">
-          <span class="github-project-label">View the Project on GitHub</span><br>
-          <a href="{{ site.public_source.url }}">{{ site.public_source.nwo }}</a>
-        </p>
-        {% endif %}
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>

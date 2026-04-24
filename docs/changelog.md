@@ -50,7 +50,7 @@ permalink: /changelog/
 </style>
 
 <p class="changelog-intro">
-  releases for this project. 
+  Notable releases for this project. Patch bumps may list only a short summary when changes are routine.
 </p>
 
 <ul class="changelog-list">
@@ -59,6 +59,9 @@ permalink: /changelog/
     <h2>UI overhaul</h2>
     <p>
       UI overhaul, switched frontend hosting to github pages as opposed to the monolith architecture I had previously.
+    </p>
+    <p>
+      Also in this release: a Jekyll + GitHub Pages marketing site (replacing the old combined UI), refreshed hero copy, a public changelog linked from the footer with semver, and two real Strava activity screenshots in the sidebar so visitors can see how Wikipedia links show up on a feed. Ongoing layout work moves maintainer and repository links below those previews and keeps the theme credits under the main column so nothing covers the examples—on the home page and on the changelog.
     </p>
   </li>
   <li>
