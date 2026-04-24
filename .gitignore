@@ -9,3 +9,5 @@ backend/prisma/*.db-journal
 .cursor/
 config-files-for-server/
 .claude
+docs/_site
+docs/.jekyll-cache

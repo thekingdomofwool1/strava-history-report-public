@@ -6,13 +6,15 @@ layout: default
   .hero {
     margin-bottom: 2rem;
   }
-  .eyebrow {
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    color: #fc4c02;
-    font-weight: 600;
-    margin: 0 0 0.4rem;
+  .hero h1 {
+    margin: 0 0 0.35rem;
+    line-height: 1.2;
+  }
+  .subhead {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0 0 1.25rem;
+    font-weight: 400;
   }
   .lead {
     font-size: 1rem;
@@ -65,11 +67,32 @@ layout: default
     color: #aaa;
     margin-top: 0.75rem;
   }
+  .site-version-row {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: #777;
+    margin: 2.5rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+  .site-version-row a {
+    color: #444;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .site-version-row a:hover {
+    text-decoration: underline;
+    color: #333;
+  }
+  .site-version-sep {
+    margin: 0 0.35rem;
+    color: #ccc;
+  }
 </style>
 
 <div class="hero">
-  <p class="eyebrow">Strava + History</p>
-  <h1>Wikipedia highlights for every activity</h1>
+  <h1>Learn about the landmarks along your favorite route</h1>
+  <p class="subhead">and share with your following!</p>
   <p class="lead">
     We integrate with Strava to add an activity description that provides a link to a Wikipedia article about a location of interest or prominence along your route.
   </p>
@@ -105,6 +128,10 @@ layout: default
     <p class="powered-by">Powered by Strava</p>
   </div>
 </div>
+
+<p class="site-version-row">
+  <span>Version 1.0.0</span><span class="site-version-sep" aria-hidden="true">·</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
+</p>
 
 <script>
   if (new URLSearchParams(window.location.search).get('connected')) {
