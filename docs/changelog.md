@@ -60,9 +60,6 @@ permalink: /changelog/
     <p>
       UI overhaul, switched frontend hosting to github pages as opposed to the monolith architecture I had previously.
     </p>
-    <p>
-      Also in this release: a Jekyll + GitHub Pages marketing site (replacing the old combined UI), refreshed hero copy, a public changelog linked from the footer with semver, and two real Strava activity screenshots in the sidebar so visitors can see how Wikipedia links show up on a feed. Ongoing layout work moves maintainer and repository links below those previews and keeps the theme credits under the main column so nothing covers the examples—on the home page and on the changelog.
-    </p>
   </li>
   <li>
     <p class="changelog-meta">26 March 2026 · <strong>1.0.0</strong></p>
