@@ -1,0 +1,302 @@
+---
+---
+
+:root {
+  --orange: #fc4c02;
+  --orange-hover: #e04400;
+  --text: #1f1f1f;
+  --muted: #555;
+  --border: #e5e5e5;
+  --bg: #ffffff;
+  --link: #0969da;
+  --link-hover: #0550ae;
+  --max: 720px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+h1, h2, h3 { line-height: 1.25; }
+
+/* ---- Topbar ------------------------------------------------------------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: saturate(180%) blur(8px);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0.65rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.brand {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+}
+.brand:hover { text-decoration: none; color: var(--text); }
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.nav-link {
+  font-size: 0.9rem;
+  color: #444;
+  padding: 0.35rem 0;
+}
+.nav-cta {
+  background: var(--orange);
+  color: #fff;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.nav-cta:hover {
+  background: var(--orange-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+@media (min-width: 720px) {
+  .topbar-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* ---- Container ---------------------------------------------------------- */
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  /* extra bottom padding so sticky CTA never covers content on mobile */
+  padding: 1.75rem 1rem 7.5rem;
+}
+
+@media (min-width: 720px) {
+  .container { padding-bottom: 2.5rem; }
+}
+
+/* ---- Hero --------------------------------------------------------------- */
+
+.hero { margin-bottom: 1.75rem; }
+.hero h1 {
+  font-size: 1.7rem;
+  margin: 0 0 0.4rem;
+}
+.subhead {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+  font-weight: 400;
+}
+.lead {
+  font-size: 1rem;
+  margin: 0 0 1.5rem;
+  color: #333;
+}
+
+@media (min-width: 720px) {
+  .hero h1 { font-size: 2.15rem; }
+}
+
+/* ---- Strava button ------------------------------------------------------ */
+
+.btn-strava {
+  display: inline-block;
+  background: var(--orange);
+  color: #fff;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  min-height: 44px;
+  line-height: 1.2;
+}
+.btn-strava:hover {
+  background: var(--orange-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+.status-connected {
+  display: none;
+  margin-top: 0.85rem;
+  color: #0f5132;
+  background: #d1e7dd;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* ---- Preview block (centered) ------------------------------------------ */
+
+.preview {
+  margin: 2.5rem auto;
+  text-align: center;
+}
+.preview-caption {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin: 0 0 0.85rem;
+  font-weight: 500;
+}
+.preview img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* ---- Cards -------------------------------------------------------------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 2.5rem 0;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  background: #fafafa;
+}
+.card h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.card p { margin: 0; font-size: 0.9rem; color: #444; }
+.card p + p { margin-top: 0.5rem; }
+.powered-by { font-size: 0.75rem; color: #aaa; margin-top: 0.5rem; }
+
+@media (min-width: 720px) {
+  .cards { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---- Version row -------------------------------------------------------- */
+
+.site-version-row {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 2.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+.site-version-row a { color: var(--link); font-weight: 500; }
+.site-version-sep { margin: 0 0.4rem; color: #ccc; }
+
+/* ---- Footer ------------------------------------------------------------- */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+}
+.site-footer p { margin: 0 0 0.4rem; }
+.site-footer p:last-child { margin-bottom: 0; }
+.theme-credit { font-size: 0.75rem; color: #999; }
+
+/* ---- Sticky bottom CTA (mobile only) ------------------------------------ */
+
+.sticky-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.97);
+  -webkit-backdrop-filter: saturate(180%) blur(8px);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-top: 1px solid var(--border);
+  z-index: 9;
+  display: flex;
+  justify-content: center;
+}
+.sticky-cta .btn-strava {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+@media (min-width: 720px) {
+  .sticky-cta { display: none; }
+}
+
+/* ---- Changelog ---------------------------------------------------------- */
+
+.changelog-intro {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin: 0 0 1.75rem;
+  max-width: 40rem;
+}
+.changelog-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 40rem;
+}
+.changelog-list li {
+  margin: 0 0 1.35rem;
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid #eee;
+}
+.changelog-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.changelog-meta {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.02em;
+}
+.changelog-list h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+}
+.changelog-list p {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 0;
+  line-height: 1.45;
+}
+.changelog-back {
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}

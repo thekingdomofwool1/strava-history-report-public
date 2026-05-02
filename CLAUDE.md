@@ -2,19 +2,15 @@
 
 ## Git Remotes
 
-This repo pushes to two remotes:
-
-- `origin` — private repo: https://github.com/thekingdomofwool1/strava-history-report
-- `all` — pushes to both private and public repos simultaneously
-
-When committing changes that should be public (anything in `docs/`, `backend/`, `.github/`), push with:
+The public repo is the only one that matters now. Push there:
 
 ```bash
-git push all master
+git push https://github.com/thekingdomofwool1/strava-history-report-public.git master
 ```
 
-The public repo is: https://github.com/thekingdomofwool1/strava-history-report-public
-(This is what GitHub Pages serves from — it must stay in sync with the private repo.)
+GitHub Pages serves from this public repo: https://github.com/thekingdomofwool1/strava-history-report-public
+
+The legacy `origin` and `all` remotes still point at the old private repo; do not push to them — the private repo is no longer maintained.
 
 ## Architecture
 

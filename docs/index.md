@@ -2,95 +2,7 @@
 layout: default
 ---
 
-<style>
-  .hero {
-    margin-bottom: 2rem;
-  }
-  .hero h1 {
-    margin: 0 0 0.35rem;
-    line-height: 1.2;
-  }
-  .subhead {
-    font-size: 0.95rem;
-    color: #555;
-    margin: 0 0 1.25rem;
-    font-weight: 400;
-  }
-  .lead {
-    font-size: 1rem;
-    color: #333;
-    margin: 0 0 1.25rem;
-  }
-  .btn-strava {
-    display: inline-block;
-    background: #fc4c02;
-    color: #fff;
-    padding: 0.7rem 1.5rem;
-    border-radius: 999px;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
-  .btn-strava:hover {
-    background: #e04400;
-    color: #fff;
-  }
-  .status-connected {
-    display: none;
-    margin-top: 0.75rem;
-    color: #0f5132;
-    background: #d1e7dd;
-    padding: 0.6rem 0.9rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
-  }
-  .cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  .card h3 {
-    margin-top: 0;
-    font-size: 0.95rem;
-  }
-  .card p {
-    font-size: 0.875rem;
-    color: #444;
-    margin: 0;
-  }
-  .card p + p {
-    margin-top: 0.5rem;
-  }
-  .powered-by {
-    font-size: 0.75rem;
-    color: #aaa;
-    margin-top: 0.75rem;
-  }
-  .site-version-row {
-    font-size: 0.95rem;
-    line-height: 1.45;
-    color: #777;
-    margin: 2.5rem 0 0;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-  }
-  .site-version-row a {
-    color: #0969da;
-    font-weight: 500;
-    text-decoration: none;
-  }
-  .site-version-row a:hover {
-    text-decoration: underline;
-    color: #0550ae;
-  }
-  .site-version-sep {
-    margin: 0 0.35rem;
-    color: #ccc;
-  }
-</style>
-
-<div class="hero">
+<section class="hero">
   <h1>Learn about the landmarks along your favorite route</h1>
   <p class="subhead">and share with your followers</p>
   <p class="lead">
@@ -100,9 +12,14 @@ layout: default
   <p class="status-connected" id="connected-msg">
     Strava account connected! New activities will be annotated automatically.
   </p>
-</div>
+</section>
 
-<div class="cards">
+<section class="preview">
+  <p class="preview-caption">Your feed could look like this!</p>
+  <img src="{{ '/assets/examples/feed-example-run.png' | relative_url }}" alt="Strava activity: chill run in Denver with a Wikipedia link about Iridescent Cloud sculpture in the description" loading="lazy" decoding="async" />
+</section>
+
+<section class="cards">
   <div class="card">
     <h3>How it works</h3>
     <p>
@@ -127,13 +44,18 @@ layout: default
     </p>
     <p class="powered-by">Powered by Strava</p>
   </div>
-</div>
+</section>
+
+<section class="preview">
+  <p class="preview-caption">Another example</p>
+  <img src="{{ '/assets/examples/feed-example-afternoon.png' | relative_url }}" alt="Strava activity: afternoon run with a Wikipedia link about Boettcher Memorial Tropical Conservatory in the description" loading="lazy" decoding="async" />
+</section>
 
 <p class="site-version-row">
-  <span>Version 1.1.0</span><span class="site-version-sep" aria-hidden="true">·</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
+  <span>Version 1.1.0</span><span class="site-version-sep" aria-hidden="true">&middot;</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
 </p>
 
-<script>
+<script defer>
   (function () {
     var params = new URLSearchParams(window.location.search);
     var msg = document.getElementById('connected-msg');

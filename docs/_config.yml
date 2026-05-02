@@ -1,8 +1,17 @@
-theme: jekyll-theme-minimal
 title: Strava History Report
 description: Wikipedia-powered highlights for every activity
 baseurl: ""
 url: "https://stravafacts.andvos.xyz"
+
+plugins:
+  - jekyll-seo-tag
+
+# Hardcoded so local previews match production (jekyll-github-metadata only runs on Pages).
+github:
+  owner_name: thekingdomofwool1
+  owner_url: "https://github.com/thekingdomofwool1"
+  repository_url: "https://github.com/thekingdomofwool1/strava-history-report-public"
+
 # Public repo (Pages source); footer link uses this so it stays correct if metadata is from the private repo.
 public_source:
   url: "https://github.com/thekingdomofwool1/strava-history-report-public"
