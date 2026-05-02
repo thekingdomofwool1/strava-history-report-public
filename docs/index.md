@@ -8,7 +8,7 @@ layout: default
   <p class="lead">
     We integrate with Strava to add an activity description that provides a link to a Wikipedia article about a location of interest or prominence along your route.
   </p>
-  <a class="btn-strava" href="https://api.andvos.xyz/auth/strava/start">Connect with Strava</a>
+  <p class="hero-cta-prompt">Connect with Strava to get started.</p>
   <p class="status-connected" id="connected-msg">
     Strava account connected! New activities will be annotated automatically.
   </p>
