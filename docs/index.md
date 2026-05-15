@@ -9,6 +9,8 @@ layout: default
     We integrate with Strava to add an activity description that provides a link to a Wikipedia article about a location of interest or prominence along your route.
   </p>
   <p class="hero-cta-prompt">Connect with Strava to get started.</p>
+  <p class="hero-cta"><a class="btn-strava" href="https://api.andvos.xyz/auth/strava/start">Connect with Strava</a></p>
+  <p class="trust">Free &middot; Disconnect anytime, data deleted instantly &middot; Open source</p>
   <p class="status-connected" id="connected-msg">
     Strava account connected! New activities will be annotated automatically.
   </p>
@@ -49,6 +51,16 @@ layout: default
 <section class="preview">
   <p class="preview-caption">Another example</p>
   <img src="{{ '/assets/examples/feed-example-afternoon.png' | relative_url }}" alt="Strava activity: afternoon run with a Wikipedia link about Boettcher Memorial Tropical Conservatory in the description" loading="lazy" decoding="async" />
+</section>
+
+<section class="faq">
+  <h2>FAQ</h2>
+  <h3>Does this spam my followers?</h3>
+  <p>No. We only add one line to your own activity's description. Nothing is posted to anyone else's feed.</p>
+  <h3>How often does it run?</h3>
+  <p>Once per activity, automatically, right after it appears on Strava.</p>
+  <h3>Is it really free?</h3>
+  <p>Yes &mdash; a personal, open-source project. No accounts, no payment, no ads.</p>
 </section>
 
 <p class="site-version-row">
