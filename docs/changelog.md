@@ -10,6 +10,15 @@ permalink: /changelog/
 
 <ul class="changelog-list">
   <li>
+    <p class="changelog-meta">15 May 2026 &middot; <strong>1.2.0</strong></p>
+    <h2>UI refresh</h2>
+    <p>
+      Update UI again to enhance the overall coolness and chillness: a brutalist
+      Web 1.0 reskin, inverted dark mode, a proper desktop sign-up button, an
+      FAQ, and a favicon.
+    </p>
+  </li>
+  <li>
     <p class="changelog-meta">24 April 2026 &middot; <strong>1.1.0</strong></p>
     <h2>UI overhaul</h2>
     <p>
