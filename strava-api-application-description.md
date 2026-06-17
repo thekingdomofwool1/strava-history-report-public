@@ -2,7 +2,7 @@
 
 We integrate with Strava to add an activity description that provides a link to a Wikipedia article about a location of interest or prominence along your route.
 
-When an activity is recorded, the app receives a webhook notification from Strava and fetches the activity's GPS route. It uses the Wikipedia API to identify a nearby location of interest or prominence, and writes a link to the relevant Wikipedia article back to the activity description via the Strava API.
+When an activity is recorded, the app receives a webhook notification from Strava and fetches the activity's GPS route. It uses the Wikipedia API to identify a nearby location of interest or prominence, and writes a link to the relevant Wikipedia article back to the activity description via the Strava API. When no notable location has a nearby article, the app instead identifies the closest town using the OpenStreetMap (Overpass) and Wikidata public APIs and links that town's Wikipedia article.
 
 The app requests `activity:read_all` and `activity:write` scopes only. No activity content is stored. The only data retained is the athlete's Strava ID and OAuth tokens, which are deleted immediately and permanently when the user disconnects their account.
 

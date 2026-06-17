@@ -1,6 +1,8 @@
 import polyline from '@mapbox/polyline';
+import { config } from '../config';
 import { prisma } from '../lib/prisma';
 import { chooseHistoricPlace } from './places';
+import { chooseNearestTown } from './town';
 import { getActivity, refreshAccessToken, updateActivityDescription, isUnauthorized, StravaActivity } from './strava';
 
 const reportPrefix = '--My noteworthy historical report-- ';
@@ -35,10 +37,26 @@ const buildWikipediaNote = (place: { title: string; articleUrl: string }, activi
 const buildFallbackMessage = (activityLabel: string) =>
   `On today's ${activityLabel} I passed a local landmark worth revisiting.`;
 
+const buildNearestTownNote = (town: { townName: string; articleUrl: string }, activityLabel: string) =>
+  `On today's ${activityLabel} I was not near any specific notable locations of historical interest, but the nearest incorporated town is ${town.townName}. You can read about it here: ${town.articleUrl}`;
+
 type ProcessInput = {
   activityId: number;
   ownerId: string;
   isUpdate?: boolean;
+};
+
+/** Write a description to Strava, or just log it when DRY_RUN is enabled. */
+const writeDescription = async (
+  authedUser: { accessToken: string },
+  activityId: number,
+  description: string
+): Promise<void> => {
+  if (config.dryRun) {
+    console.log(`[DRY_RUN] Would set Strava activity ${activityId} description to:\n${description}`);
+    return;
+  }
+  await updateActivityDescription(authedUser, activityId, description);
 };
 
 const withTokenRetry = async <T>(userId: number, fn: (user: { accessToken: string }) => Promise<T>): Promise<T> => {
@@ -102,7 +120,7 @@ export const processActivity = async ({ activityId, ownerId, isUpdate }: Process
           const newDescription = currentDescription
             ? `${currentDescription}\n\n${existing.oneLiner}`
             : existing.oneLiner!;
-          await updateActivityDescription(authedUser, activityId, newDescription);
+          await writeDescription(authedUser, activityId, newDescription);
           console.log(`Restored blurb on activity ${activityId}`);
         }
       });
@@ -144,6 +162,16 @@ export const processActivity = async ({ activityId, ownerId, isUpdate }: Process
     blurb = `${reportPrefix}${buildWikipediaNote(place, activityLabel)}`;
     placeName = place.title;
     console.log(`Appended Wikipedia note for activity ${activityId}`, blurb);
+  } else {
+    const town = await chooseNearestTown(points).catch((err) => {
+      console.warn(`Nearest-town lookup failed for activity ${activityId}`, err);
+      return null;
+    });
+    if (town) {
+      blurb = `${reportPrefix}${buildNearestTownNote(town, activityLabel)}`;
+      placeName = town.townName;
+      console.log(`Appended nearest-town note for activity ${activityId}`, blurb);
+    }
   }
 
   const existingDescription = activity.description ?? '';
@@ -152,7 +180,7 @@ export const processActivity = async ({ activityId, ownerId, isUpdate }: Process
     : `${existingDescription ? `${existingDescription}\n\n` : ''}${blurb}`;
 
   try {
-    await withTokenRetry(user.id, (authedUser) => updateActivityDescription(authedUser, activityId, newDescription));
+    await withTokenRetry(user.id, (authedUser) => writeDescription(authedUser, activityId, newDescription));
     console.log(`Updated Strava activity ${activityId} description`);
   } catch (err) {
     const status = (err as any)?.response?.status;

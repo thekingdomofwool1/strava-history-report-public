@@ -33,8 +33,9 @@ layout: default
     <h3>Privacy</h3>
     <p>
       We store only your Strava ID and OAuth tokens. Three GPS points from your route are
-      sent to Wikipedia's public API to find nearby articles. No data is sold or shared.
-      Disconnecting your Strava account deletes all stored data immediately.
+      sent to Wikipedia's public API to find nearby articles; if none are found, the same
+      points are sent to OpenStreetMap and Wikidata to find your nearest town. No data is
+      sold or shared. Disconnecting your Strava account deletes all stored data immediately.
     </p>
   </div>
 
