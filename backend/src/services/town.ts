@@ -56,7 +56,9 @@ const buildOverpassQuery = (points: RoutePoint[], placeKinds: string[]): string 
   const clauses = points
     .flatMap((p) => placeKinds.map((kind) => `  node(around:${radius},${p.lat},${p.lng})[place=${kind}];`))
     .join('\n');
-  return `[out:json][timeout:25];\n(\n${clauses}\n);\nout tags;`;
+  // `out center` returns tags *and* geometry (lat/lon for nodes, a center for
+  // ways/relations); plain `out tags` omits coordinates, which we need for distance.
+  return `[out:json][timeout:25];\n(\n${clauses}\n);\nout center;`;
 };
 
 const fetchSettlements = async (points: RoutePoint[], placeKinds: string[]): Promise<OverpassElement[]> => {
