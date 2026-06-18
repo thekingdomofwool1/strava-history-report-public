@@ -10,6 +10,16 @@ permalink: /changelog/
 
 <ul class="changelog-list">
   <li>
+    <p class="changelog-meta">18 June 2026 &middot; <strong>1.3.0</strong></p>
+    <h2>Nearest-town fallback</h2>
+    <p>
+      When we are unable to find a notable location via the Wikipedia Geo API, the
+      article-generation flow will use another open-source map API provider to
+      identify the town or city that is nearest the location of an activity and then
+      provide an article on that location.
+    </p>
+  </li>
+  <li>
     <p class="changelog-meta">15 May 2026 &middot; <strong>1.2.0</strong></p>
     <h2>UI refresh</h2>
     <p>

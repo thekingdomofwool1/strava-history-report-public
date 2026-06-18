@@ -1,0 +1,54 @@
+name: Try town locator
+
+# Runs the nearest-town harness (scripts/try-town.ts) on a GitHub runner, which
+# has open internet access to Overpass / Wikipedia / Wikidata. The resolved town
+# + verified article URL for each point is printed to the job log.
+#
+# - workflow_dispatch: run manually, optionally with custom coordinates. (Note:
+#   the "Run workflow" button only appears once this file is on the default
+#   branch; until then the push trigger below covers it.)
+# - push: auto-runs on feature branches when the town logic or harness changes,
+#   using the default sample points.
+
+on:
+  workflow_dispatch:
+    inputs:
+      lat:
+        description: 'Latitude (blank = run the default sample points)'
+        required: false
+        type: string
+      lng:
+        description: 'Longitude (blank = run the default sample points)'
+        required: false
+        type: string
+      label:
+        description: 'Label for the point (optional)'
+        required: false
+        type: string
+  push:
+    branches: ['claude/**', 'feature/**']
+    paths:
+      - 'backend/scripts/try-town.ts'
+      - 'backend/src/services/town.ts'
+      - '.github/workflows/try-town.yml'
+
+jobs:
+  try-town:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+      - name: Run town locator harness
+        working-directory: backend
+        env:
+          TRY_LAT: ${{ inputs.lat }}
+          TRY_LNG: ${{ inputs.lng }}
+          TRY_LABEL: ${{ inputs.label }}
+        run: npx ts-node --transpile-only scripts/try-town.ts

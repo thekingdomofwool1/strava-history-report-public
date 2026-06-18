@@ -20,7 +20,17 @@ type Config = {
     /** Identifying User-Agent for Wikimedia API etiquette */
     userAgent: string;
   };
+  overpass: {
+    /** e.g. https://overpass-api.de — endpoint is at {origin}/api/interpreter */
+    origin: string;
+    /** Nearest-town search radius in meters */
+    radiusMeters: number;
+    /** Identifying User-Agent for OSM/Overpass etiquette */
+    userAgent: string;
+  };
   baseAppUrl: string;
+  /** When true, log the would-be Strava description instead of writing it. */
+  dryRun: boolean;
 };
 
 const required = (value: string | undefined, name: string): string => {
@@ -52,7 +62,16 @@ export const config: Config = {
       process.env.WIKIPEDIA_USER_AGENT ??
       'StravaHistoryReport/1.0 (https://github.com/strava-history-report; no-contact)'
   },
+  overpass: {
+    origin: (process.env.OVERPASS_ORIGIN ?? 'https://overpass-api.de').replace(/\/$/, ''),
+    radiusMeters: Math.max(1, Number(process.env.OVERPASS_SEARCH_RADIUS ?? 40_000)),
+    userAgent:
+      process.env.OVERPASS_USER_AGENT ??
+      process.env.WIKIPEDIA_USER_AGENT ??
+      'StravaHistoryReport/1.0 (https://github.com/strava-history-report; no-contact)'
+  },
   baseAppUrl:
     process.env.BASE_APP_URL ??
     (process.env.NODE_ENV === 'production' ? 'https://stravafacts.andvos.xyz' : 'http://localhost:5173'),
+  dryRun: ['1', 'true', 'yes'].includes((process.env.DRY_RUN ?? '').toLowerCase())
 };
