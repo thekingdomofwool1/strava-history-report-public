@@ -28,12 +28,28 @@ for (const [key, value] of Object.entries(DUMMY_ENV)) {
 const { chooseNearestTown } = require('../src/services/town') as typeof import('../src/services/town');
 type RoutePoint = import('../src/services/town').RoutePoint;
 
-const cases: { label: string; point: RoutePoint }[] = [
+type TownCase = { label: string; point: RoutePoint };
+
+const DEFAULT_CASES: TownCase[] = [
   { label: 'Rural CO (US-285 corridor)', point: { lat: 39.4017, lng: -105.4842 } },
   { label: 'Downtown Denver', point: { lat: 39.7392, lng: -104.9903 } },
   { label: 'Remote high country (Sawatch Range)', point: { lat: 39.119, lng: -106.4453 } },
   { label: 'Rural farmland (central Kansas)', point: { lat: 38.5, lng: -98.5 } }
 ];
+
+/** Optional single point from env (TRY_LAT/TRY_LNG/TRY_LABEL) — used by the "Try town locator" workflow. */
+const caseFromEnv = (): TownCase | null => {
+  const latRaw = process.env.TRY_LAT?.trim();
+  const lngRaw = process.env.TRY_LNG?.trim();
+  if (!latRaw || !lngRaw) return null;
+  const lat = Number(latRaw);
+  const lng = Number(lngRaw);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { label: process.env.TRY_LABEL?.trim() || 'Custom point', point: { lat, lng } };
+};
+
+const envCase = caseFromEnv();
+const cases: TownCase[] = envCase ? [envCase] : DEFAULT_CASES;
 
 const main = async (): Promise<void> => {
   for (const { label, point } of cases) {
