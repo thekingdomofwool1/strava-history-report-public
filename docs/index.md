@@ -65,7 +65,7 @@ layout: default
 </section>
 
 <p class="site-version-row">
-  <span>Version 1.2.0</span><span class="site-version-sep" aria-hidden="true">&middot;</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
+  <span>Version 1.3.0</span><span class="site-version-sep" aria-hidden="true">&middot;</span><a href="{{ '/changelog/' | relative_url }}">Changelog</a>
 </p>
 
 <script defer>
