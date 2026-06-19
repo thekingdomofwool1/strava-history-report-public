@@ -57,11 +57,9 @@ layout: default
 <section class="faq">
   <h2>FAQ</h2>
   <h3>Does this spam my followers?</h3>
-  <p>No. We only add one line to your own activity's description. Nothing is posted to anyone else's feed.</p>
+  <p>No. We only add one line to your own activity's description.</p>
   <h3>How often does it run?</h3>
-  <p>Once per activity, automatically, right after it appears on Strava.</p>
-  <h3>Is it really free?</h3>
-  <p>Yes &mdash; a personal, open-source project. No accounts, no payment, no ads.</p>
+  <p>Once per activity right after it appears on Strava.</p>
 </section>
 
 <p class="site-version-row">
