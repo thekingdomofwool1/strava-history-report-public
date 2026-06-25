@@ -15,10 +15,22 @@ type Config = {
   wikipedia: {
     /** e.g. https://en.wikipedia.org — API is at {origin}/w/api.php */
     origin: string;
+    /** e.g. https://wikimedia.org — Pageviews REST API is at {origin}/api/rest_v1 */
+    pageviewsOrigin: string;
     /** Geosearch radius in meters (clamped to API max, typically 10000) */
     radiusMeters: number;
     /** Identifying User-Agent for Wikimedia API etiquette */
     userAgent: string;
+  };
+  placeScoring: {
+    /** Multiplier applied to log10(monthlyViews + 1) when scoring candidates */
+    notabilityWeight: number;
+    /** Minimum average monthly pageviews for a candidate to clear the notability bar */
+    minMonthlyViews: number;
+    /** How many nearest candidates to enrich with pageviews (bounds API calls per activity) */
+    enrichTopN: number;
+    /** Trailing window (months) of pageviews to average over */
+    pageviewsWindowMonths: number;
   };
   overpass: {
     /** e.g. https://overpass-api.de — endpoint is at {origin}/api/interpreter */
@@ -54,6 +66,7 @@ export const config: Config = {
   },
   wikipedia: {
     origin: (process.env.WIKIPEDIA_ORIGIN ?? 'https://en.wikipedia.org').replace(/\/$/, ''),
+    pageviewsOrigin: (process.env.WIKIPEDIA_PAGEVIEWS_ORIGIN ?? 'https://wikimedia.org').replace(/\/$/, ''),
     radiusMeters: Math.min(
       WIKIPEDIA_MAX_RADIUS_M,
       Math.max(1, Number(process.env.WIKIPEDIA_SEARCH_RADIUS ?? 1500))
@@ -61,6 +74,12 @@ export const config: Config = {
     userAgent:
       process.env.WIKIPEDIA_USER_AGENT ??
       'StravaHistoryReport/1.0 (https://github.com/strava-history-report; no-contact)'
+  },
+  placeScoring: {
+    notabilityWeight: Math.max(0, Number(process.env.PLACE_NOTABILITY_WEIGHT ?? 300)),
+    minMonthlyViews: Math.max(0, Number(process.env.PLACE_MIN_MONTHLY_VIEWS ?? 500)),
+    enrichTopN: Math.max(1, Number(process.env.PLACE_ENRICH_TOP_N ?? 12)),
+    pageviewsWindowMonths: Math.max(1, Number(process.env.PLACE_PAGEVIEWS_WINDOW_MONTHS ?? 12))
   },
   overpass: {
     origin: (process.env.OVERPASS_ORIGIN ?? 'https://overpass-api.de').replace(/\/$/, ''),
